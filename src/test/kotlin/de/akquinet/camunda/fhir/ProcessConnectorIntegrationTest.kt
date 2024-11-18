@@ -11,7 +11,6 @@ import org.springframework.web.client.RestClient
 import java.time.Duration
 
 @SpringBootTest
-@Disabled("A running C8RUN instance expected")
 class ProcessConnectorIntegrationTest(@Autowired val client: ZeebeClient) {
 
     @Test
