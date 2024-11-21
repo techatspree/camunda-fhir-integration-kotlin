@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@SpringBootTest(properties = ["hapi.fhir.serverbase=http://localhost:8081/"])
 @CamundaSpringProcessTest
-class ProcessHapiIntegrationTest(@Autowired val client: ZeebeClient) {
+class ProcessHapiIntegrationTest(@Autowired val client: ZeebeClient): WiremockTestBase() {
 
     @Test
     fun testDeploymentAndStartProcessInstance() {

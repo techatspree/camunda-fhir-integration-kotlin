@@ -2,7 +2,6 @@ package de.akquinet.camunda.fhir
 
 import io.camunda.zeebe.client.ZeebeClient
 import org.awaitility.Awaitility
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -10,8 +9,8 @@ import org.springframework.http.MediaType
 import org.springframework.web.client.RestClient
 import java.time.Duration
 
-@SpringBootTest
-class ProcessConnectorIntegrationTest(@Autowired val client: ZeebeClient) {
+@SpringBootTest(properties = ["hapi.fhir.serverbase=http://localhost:8081/Patient/"])
+class ProcessConnectorIntegrationTest(@Autowired val client: ZeebeClient): WiremockTestBase() {
 
     @Test
     fun testDeploymentAndStartProcessInstance() {
@@ -32,7 +31,7 @@ class ProcessConnectorIntegrationTest(@Autowired val client: ZeebeClient) {
 
         Awaitility
             .await()
-            .atMost(Duration.ofSeconds(30))
+            .atMost(Duration.ofSeconds(20))
             .until { checkForProcessInstanceIsCompleted(restClient, processInstance.processInstanceKey) }
     }
 

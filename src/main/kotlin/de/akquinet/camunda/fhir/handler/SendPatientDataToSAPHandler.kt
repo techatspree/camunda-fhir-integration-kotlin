@@ -12,7 +12,7 @@ class SendPatientDataToSAPHandler {
     private val log: Logger = LoggerFactory.getLogger(SendPatientDataToSAPHandler::class.java)
 
     @JobWorker(type = "send-patientdata_to_sap")
-    fun setPatientAddressToSAP(@VariablesAsType variables: PatientData?) {
+    fun setPatientAddressToSAP(@VariablesAsType variables: PatientData) {
         log.info("sending patient data to SAP: {}", variables)
     }
 }

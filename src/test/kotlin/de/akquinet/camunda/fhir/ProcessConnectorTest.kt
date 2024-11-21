@@ -33,6 +33,7 @@ class ProcessConnectorTest {
             .send()
             .join()
 
+        completeServiceTasks("set-fhir-server-url", 1)
         completeServiceTasks("io.camunda:http-json:1", 1)
         completeServiceTasks("send-patientdata_to_sap", 1)
 

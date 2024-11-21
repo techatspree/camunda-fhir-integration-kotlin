@@ -1,19 +1,11 @@
 # Demo for integrating a Fhir ressource into Camunda Workflows
 
-## The demo process
-We are showcasing two approaches to integrate a Fhir ressource into a camunda workflow.
+## The Demo process
+The demo process definition is focussing of a typical integration task to fetch some patient data from a FHIR server to put it into a third party system like SAP.
 
-The demo process definition is based of a typical integration task to fetch some information from system A to put it into a system B.
+![camunda_under_fhir.png](src/main/resources/camunda_under_fhir.png)
 
-![camunda_under_fhir_hapi.png](src/main/resources/camunda_under_fhir_hapi.png)
-
-
-Our process definition consists of two service tasks. The first one is responsible to fetch some patient data from 
-a Fhir server and populate the data as process variables.
-The second service task simulates to write the patient data into another 3rd party system like SAP 
-(for demo purposes it does log out the patient data only).
-
-Fetching the data from a Fhir server can be done in several ways with camunda. We are demonstrating two soliutions:
+We will implement this process with two different approaches for integrating a FHIR server in to a camunda workflow automation.
 
 * Implementing a job handler by using the popular HAPI Fhir client (https://hapifhir.io) 
 * A no code solution with the provided camunda REST connector
@@ -24,7 +16,6 @@ Fetching the data from a Fhir server can be done in several ways with camunda. W
 To run the demo successfully the following requirements have to be met:
 * Java 21 installed
 * A running Docker daemon 
-* Internet connection to have access to the HAPI Test Fhir server
 * Installed and running Camunda 8 Run instance (for the REST connector example)
 
 ### Camunda 8 Run
@@ -39,7 +30,24 @@ This will build the project and run all the test cases. These test cases will de
 and will do some assertions.
 
 ## Hapi Fhir solution
-The following process definition does include the Hapi Fhir client in a custom jobhandler implementation.
+This approach does rely on implementing a customized job handler which does the data exchange with a FHIR server. 
+We rely in this example on HAPI a very common FHIR library in the java ecosystem.
+
+Our process definition consists of two service tasks. The first one is responsible to fetch some patient data from
+a Fhir server and populate the data as process variables.
+The second service task simulates to write the patient data into another 3rd party system like SAP
+(for demo purposes it does log out the patient data only).
+
+![camunda_under_fhir_hapi.png](src/main/resources/camunda_under_fhir_hapi.png)
+
+This process application does contain the following features and can be a good starting point for further investigations.
+* SpringBoot and Kotlin based application deploying the example process definitions
+* Providing Job Handler for implementing service task logic
+* Service Bean for encapsulating the FHIR integration via HAPI library
+* Processtest for evaluating the correct modeling of the process definition with mocked job handler. This is using the Zebee Process Test library (https://docs.camunda.io/docs/apis-tools/java-client/zeebe-process-test/)
+* Full integration test relying on wiremock based abstraction of a real FHIR server
+  The first test case does test the process in mocked environment. While the second test case is performing
+  a full integration test. This is based on the new Camunda Process Test Framework (https://docs.camunda.io/docs/apis-tools/testing/getting-started/)
 
 Process definition:
 * [camunda_under_fhir_hapi.bpmn](src/main/resources/camunda_under_fhir_hapi.bpmn)
@@ -48,13 +56,14 @@ The test cases showcasing this particular approach:
 * [ProcessHapiTest.kt](src/test/kotlin/de/akquinet/camunda/fhir/ProcessHapiTest.kt)
 * [ProcessHapiIntegrationTest.kt](src/test/kotlin/de/akquinet/camunda/fhir/ProcessHapiIntegrationTest.kt)
 
-The first test case does test the process in mocked environment. While the second test case is performing
-a full integration test.
 
 ## Camunda 8 REST connector solution
 The following process definition does include the usage of the Camunda 8 REST connector involving configuration only.
 
-Process definition:
+![camunda_under_fhir_connector.png](src/main/resources/camunda_under_fhir_connector.png)
+
+We extended the process definition for additional service task to populate the URL for the FHIR server as a process variable for easier changeability.
+For details have a look into the process definition:
 * [camunda_under_fhir_connector.bpmn](src/main/resources/camunda_under_fhir_connector.bpmn)
 
 The test cases showcasing this particular approach:
@@ -64,7 +73,7 @@ The test cases showcasing this particular approach:
 The first test case does test the process in mocked environment. While the second test case is performing
 a full integration test.
 
-The integration test for the Rest connector is not enabled by default. It does need a running Camudna 8 Run instance.
+The integration test for the Rest connector is not enabled by default. It does need a running Camunda 8 Run instance.
 So after starting Camunda 8 run just start the integration test from your favorite IDE or by using the maven cli:
 
     $./mvnw test -Dtest=de.akquinet.camunda.fhir.ProcessConnectorIntegrationTest
