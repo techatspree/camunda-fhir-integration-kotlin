@@ -1,5 +1,7 @@
 # Demo for integrating a Fhir ressource into Camunda Workflows
 
+This demo is based on the following blog post: https://blog.akquinet.de/2024/11/25/camunda-under-fhir/
+
 ## The Demo process
 The demo process definition is focussing of a typical integration task to fetch some patient data from a FHIR server to put it into a third party system like SAP.
 
